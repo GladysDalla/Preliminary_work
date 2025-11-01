@@ -53,14 +53,47 @@ This research:
 - Respects Reddit's API terms of service and community guidelines
 - Follows established ethical protocols for digital ethnography
 
-## Dependencies
-```
-praw==7.7.1
-pandas==2.1.0
-openpyxl==3.1.2
+### Quick Setup
+
+1. **Clone repository:**
+```bash
+   git clone https://github.com/GladysDalla/Preliminary_work.git
+   cd Preliminary_work
 ```
 
-Install with: `pip install -r requirements.txt`
+2. **Create virtual environment:**
+```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. **Install dependencies:**
+```bash
+   pip install -r requirements.txt
+```
+
+4. **Set up credentials:**
+   - Copy `.env.example` to `.env`
+   - Add your Reddit API credentials to `.env`
+   - See [Setup Guide](documentation/setup_guide.md) for details
+
+5. **Run analysis:**
+```bash
+   python code/collect_cna_posts.py
+```
+
+### Environment Management
+
+Always activate the virtual environment before running scripts:
+```bash
+source venv/bin/activate  # Mac/Linux
+venv\Scripts\activate     # Windows
+```
+
+Deactivate when done:
+```bash
+deactivate
+```
 
 ## Citation
 
@@ -76,30 +109,3 @@ MIT License - See LICENSE file for details
 ```
 
 ---
-
-## Create Essential Files
-
-### 1. requirements.txt
-
-Create file `requirements.txt`:
-```
-praw==7.7.1
-pandas==2.1.0
-openpyxl==3.1.2
-python-dateutil==2.8.2
-```
-
-### 2. .gitignore
-
-Your .gitignore should include (GitHub's Python template covers most):
-```
-# Add these to protect privacy
-data/
-*.xlsx
-*.csv
-credentials.py
-config.py
-
-# Keep example outputs only
-!outputs/*.csv
-!analysis/*_template.xlsx

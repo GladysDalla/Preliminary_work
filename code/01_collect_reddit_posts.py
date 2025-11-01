@@ -3,10 +3,27 @@ import pandas as pd
 from datetime import datetime
 from collections import Counter
 import re
+import os
+from dotenv import load_dotenv
 
-CLIENT_ID = 'Lk3RveTqv4lccpkztueXlQ'
-CLIENT_SECRET = 'NqLzXmDTHzNNXhQ5BIhx6JBbpSu89A'
-USER_AGENT = 'academic_research_care_workers_v1.0'
+# Load environment variables from .env file
+load_dotenv()
+
+CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
+CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
+USER_AGENT = os.getenv('REDDIT_USER_AGENT')
+
+# Verify credentials are loaded
+if not CLIENT_ID or not CLIENT_SECRET:
+    print("ERROR: Reddit API credentials not found!")
+    print("Make sure you have a .env file in the repo root with:")
+    print("  REDDIT_CLIENT_ID=your_id")
+    print("  REDDIT_CLIENT_SECRET=your_secret")
+    print("  REDDIT_USER_AGENT=your_user_agent")
+    print("\nSee .env.example for template")
+    exit(1)
+
+print("OK - Credentials loaded from environment")
 
 # Initialize Reddit connection
 print("Connecting to Reddit...")
@@ -15,6 +32,8 @@ reddit = praw.Reddit(
     client_secret=CLIENT_SECRET,
     user_agent=USER_AGENT
 )
+
+# DATA COLLECTION
 
 print("Collecting posts from r/CNA...")
 subreddit = reddit.subreddit('CNA')
@@ -70,14 +89,14 @@ for post in subreddit.new(limit=500):
 df = pd.DataFrame(posts_data)
 df = df.sort_values('created_date', ascending=False)
 
-print(f"\n✓ Collected {len(df)} posts")
+print(f"\nOK - Collected {len(df)} posts")
 print(f"  Date range: {df['created_date'].min().date()} to {df['created_date'].max().date()}")
 print(f"  Breakdown by year:")
 print(df['year'].value_counts().sort_index())
 
-# ============================================
+
 # WORD FREQUENCY ANALYSIS
-# ============================================
+
 print("\n" + "="*50)
 print("WORD FREQUENCY ANALYSIS")
 print("="*50)
@@ -115,9 +134,9 @@ for category, terms in terms_categories.items():
         if count > 0:
             print(f"  '{term}': {count}")
 
-# ============================================
+
 # IDENTIFY HIGH-ENGAGEMENT POSTS FOR MANUAL REVIEW
-# ============================================
+
 print("\n" + "="*50)
 print("PREPARING FOR MANUAL ANALYSIS")
 print("="*50)
@@ -133,11 +152,11 @@ substantive = substantive.sort_values('engagement', ascending=False)
 # Top 150 most engaging posts
 top_posts = substantive.head(150)
 top_posts.to_excel('top_150_cna_posts.xlsx', index=False)
-print(f"✓ Saved top 150 most-engaged posts to 'top_150_cna_posts.xlsx'")
+print(f"OK - Saved top 150 most-engaged posts to 'top_150_cna_posts.xlsx'")
 
 # All substantive posts
 substantive.to_excel('all_cna_posts_substantive.xlsx', index=False)
-print(f"✓ Saved {len(substantive)} substantive posts to 'all_cna_posts_substantive.xlsx'")
+print(f"OK - Saved {len(substantive)} substantive posts to 'all_cna_posts_substantive.xlsx'")
 
 # Create a filtered set for specific themes
 keywords = ['app', 'stress', 'burnout', 'quit', 'wage', 'indeed', 'schedule', 'tired', 'overwhelmed']
@@ -148,7 +167,7 @@ themed = substantive[
     substantive['text'].str.contains(pattern, case=False, na=False)
 ]
 themed.to_excel('themed_posts_for_analysis.xlsx', index=False)
-print(f"✓ Saved {len(themed)} theme-relevant posts to 'themed_posts_for_analysis.xlsx'")
+print(f"OK - Saved {len(themed)} theme-relevant posts to 'themed_posts_for_analysis.xlsx'")
 
 print("\n" + "="*50)
 print("COLLECTION COMPLETE!")

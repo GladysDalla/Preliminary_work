@@ -1,3 +1,19 @@
+"""
+Automated Thematic Coding Analysis for Care Worker Posts
+
+This script performs automated keyword-based categorization of Reddit posts
+to identify patterns in care worker discourse about stress, coping, and technology use.
+
+Methodology: Hybrid approach combining automated keyword matching with manual validation
+- Phase 1: Automated categorization using predefined keyword lists
+- Phase 2: Pattern frequency analysis and co-occurrence detection
+- Phase 3: Quote extraction for qualitative examples
+- Phase 4: Manual review of flagged priority posts
+
+This approach balances computational efficiency with qualitative depth.
+
+"""
+
 import pandas as pd
 import re
 from collections import Counter
@@ -9,9 +25,8 @@ print("="*60)
 print("THEMATIC CODING ANALYSIS")
 print("="*60)
 
-# ============================================
 # LOAD DATA
-# ============================================
+
 print("\n1. Loading data...")
 df = pd.read_excel('themed_posts_for_analysis.xlsx')
 print(f"   Loaded {len(df)} themed posts")
@@ -20,9 +35,10 @@ print(f"   Loaded {len(df)} themed posts")
 df['full_text'] = df['title'].fillna('') + ' ' + df['text'].fillna('')
 df['full_text_lower'] = df['full_text'].str.lower()
 
-# ============================================
+
 # DEFINE CODING CATEGORIES
-# ============================================
+# Define coding categories based on preliminary observations and research questions
+# Each category represents a distinct theme in care worker discourse
 
 categories = {
     'wellness_app_mentioned': {
@@ -75,9 +91,12 @@ categories = {
     }
 }
 
-# ============================================
+
 # AUTOMATED CATEGORIZATION
-# ============================================
+
+# Automated categorization using keyword matching
+# This is intentionally conservative - flags posts for manual review rather than final classification
+
 print("\n2. Categorizing posts...")
 
 for category_name, category_info in categories.items():
@@ -98,9 +117,9 @@ for category_name, category_info in categories.items():
     percentage = (count / len(df)) * 100
     print(f"   {category_name}: {count} posts ({percentage:.1f}%)")
 
-# ============================================
+
 # EXTRACT POTENTIAL QUOTES
-# ============================================
+
 print("\n3. Extracting potential quotes...")
 
 def extract_sentences(text, max_length=200):
@@ -124,9 +143,9 @@ def extract_sentences(text, max_length=200):
 # Extract quotes for posts with wellness app mentions
 df['potential_quotes'] = df['full_text'].apply(extract_sentences)
 
-# ============================================
+
 # IDENTIFY KEY PATTERNS
-# ============================================
+
 print("\n4. Identifying key patterns...")
 
 # Pattern 1: App Adoption-Abandonment
@@ -163,9 +182,9 @@ print(f"\n   PATTERN 5: Time Poverty & Burnout")
 print(f"   - Scheduling issues: {scheduling} posts")
 print(f"   - Burnout/exhaustion: {burnout} posts")
 
-# ============================================
+
 # CREATE PRIORITY REVIEW LIST
-# ============================================
+
 print("\n5. Creating priority review lists...")
 
 # High-priority posts for manual review
@@ -198,9 +217,9 @@ priority_df = priority_df.sort_values('engagement', ascending=False)
 
 print(f"   Created priority review list: {len(priority_df)} posts")
 
-# ============================================
+
 # EXPORT RESULTS
-# ============================================
+
 print("\n6. Exporting results...")
 
 # Create Excel workbook with multiple sheets
@@ -267,9 +286,9 @@ with pd.ExcelWriter(output_file, engine='openpyxl') as writer:
 
 print(f"   ✓ Results saved to: {output_file}")
 
-# ============================================
+
 # GENERATE QUOTE CANDIDATES
-# ============================================
+
 print("\n7. Extracting quote candidates...")
 
 quote_candidates = []
@@ -327,9 +346,9 @@ quotes_df.to_excel('quote_candidates.xlsx', index=False)
 print(f"   ✓ Extracted {len(quotes_df)} quote candidates")
 print(f"   ✓ Saved to: quote_candidates.xlsx")
 
-# ============================================
+
 # FINAL SUMMARY
-# ============================================
+
 print("\n" + "="*60)
 print("ANALYSIS COMPLETE!")
 print("="*60)

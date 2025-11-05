@@ -1,3 +1,11 @@
+"""
+    Reddit Data Collection Script for Care Worker Discourse Analysis
+
+This script collects publicly available posts from r/CNA to analyze
+care worker discussions about stress, technology use, and coping strategies.
+
+"""
+
 import praw
 import pandas as pd
 from datetime import datetime
